@@ -200,12 +200,14 @@ func (sc *Scene) draw(bitmap [][width][]byte, startHeight, endHeight int,
 		for j := 0; j < width; j++ {
 			dir := Vec{float64(j - width/2), float64(i - height/2), float64(focal)}
 
-			dir.x = dir.x*cosAz + dir.z*sinAz
-			dir.z = -dir.x*sinAz + dir.z*cosAz
+			rotDir := Vec{
+				dir.x*cosAz + dir.z*sinAz,
+				dir.y,
+				-dir.x*sinAz + dir.z*cosAz}
 
 			color := Color{0, 0, 0}
 			for r := 0; r < rays; r++ {
-				randomDir := dir.add(randn().mul(antialiasing))
+				randomDir := rotDir.add(randn().mul(antialiasing))
 				ray := Ray{pos, normalize(randomDir)}
 				color = color.add(sc.trace(&ray, 0))
 			}
@@ -275,7 +277,7 @@ func main() {
 
 	// define eye
 	pos := Vec{0, 0, 0}
-	azimuth := 25.0 * math.Pi / 180.0
+	azimuth := 30.0 * math.Pi / 180.0
 
 	const focal = 500
 	const antialiasing = 1.0

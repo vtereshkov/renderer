@@ -265,7 +265,7 @@ int main()
 
   // define eye
   const Vec pos(0, 0, 0);
-  const double azimuth = 25.0 * M_PI / 180.0;
+  const double azimuth = 30.0 * M_PI / 180.0;
   const double sinAz = sin(azimuth), cosAz = cos(azimuth);
 
   const int width = 640, height = 480;
@@ -284,13 +284,14 @@ int main()
       {
       Vec dir(j - width / 2, i - height / 2, focal);
 
-      dir.x =  dir.x * cosAz + dir.z * sinAz;
-      dir.z = -dir.x * sinAz + dir.z * cosAz;
+      Vec rotDir( dir.x * cosAz + dir.z * sinAz,
+                  dir.y,
+                 -dir.x * sinAz + dir.z * cosAz);
 
       Color color;      
       for (int r = 0; r < rays; r++)
         {
-        Vec randomDir(dir + Vec(rnd(), rnd(), rnd()) * antialiasing);
+        Vec randomDir(rotDir + Vec(rnd(), rnd(), rnd()) * antialiasing);
         Ray ray(pos, normalize(randomDir));        
         color = color + scene.trace(ray);
         }        
